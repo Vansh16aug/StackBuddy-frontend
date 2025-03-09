@@ -28,14 +28,12 @@ const Body = () => {
   };
 
   const userId = useSelector((state) => state.user?._id);
-  console.log(userId);
 
   useEffect(() => {
     if (userId) {
       try {
         const socket = createSocketConnection();
         socket.emit("userOnline", { userId });
-        console.log("user online");
         return () => {
           socket.disconnect();
         };
