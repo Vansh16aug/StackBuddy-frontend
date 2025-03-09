@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { addRequest } from "../redux/requestSlice";
 import Sidebar from "./Sidebar";
+import { createSocketConnection } from "../utils/sockets";
 
 const Body = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,24 @@ const Body = () => {
       console.log(err.message);
     }
   };
-  // console.log(navigator.geolocation);
+
+  const userId = useSelector((state) => state.user?._id);
+  console.log(userId);
+
+  useEffect(() => {
+    if (userId) {
+      try {
+        const socket = createSocketConnection();
+        socket.emit("userOnline", { userId });
+        console.log("user online");
+        return () => {
+          socket.disconnect();
+        };
+      } catch (error) {
+        console.error("Socket connection error:", error);
+      }
+    }
+  }, [userId]);
 
   useEffect(() => {
     fetchUser();
